@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import (QAction, QApplication, QButtonGroup, QComboBox,
                              QHBoxLayout, QLabel, QMainWindow, QMessageBox, QSizePolicy,
                              QToolBox, QToolButton, QWidget, QFileDialog, QGraphicsTextItem, QMenu, QFontComboBox)
 
+# noinspection PyUnresolvedReferences
 import diagramscene_rc
 import math
 
@@ -142,7 +143,7 @@ class DiagramItem(QGraphicsPolygonItem):
         self.diagramType = diagram_type
         self.contextMenu = context_menu
 
-        path = QPainterPath()
+        # path = QPainterPath()
         if self.diagramType == self.Channel:
             self.myPolygon = QPolygonF([
                 QPointF(-100, -50), QPointF(100, -50),
@@ -223,8 +224,6 @@ class DiagramScene(QGraphicsScene):
         self.m_drag_offset = 0
         self.m_dragged = None
 
-        self.enable_grid()  # TODO move to main screen
-
     def set_line_color(self, color):
         self.my_line_color = color
         if self.is_item_changed(Arrow):
@@ -244,31 +243,27 @@ class DiagramScene(QGraphicsScene):
             item = self.selectedItems()[0]
             item.setBrush(self.my_item_color)
 
-    def setFont(self, font):  # TODO do we really need it?
+    def setFont(self, font):
         self.my_font = font
         if self.is_item_changed(DiagramTextItem):
             item = self.selectedItems()[0]
-            item.set_font(self.my_font)
+            item.setFont(self.my_font)
 
     def set_mode(self, mode):
         self.my_mode = mode
-
-    def enable_grid(self):
-        for i in range(50):
-            for j in range(50):
-                self.addEllipse(i * 100, j * 100, 2, 2)
 
     def set_item_type(self, new_type):
         self.my_item_type = new_type
 
     def editor_lost_focus(self, item):
-        cursor = item.text_cursor()
-        cursor.clearSelection()
-        item.set_text_cursor(cursor)
+        if item:
+            cursor = item.text_cursor()
+            cursor.clearSelection()
+            item.set_text_cursor(cursor)
 
-        if item.to_plain_text():
-            self.removeItem(item)
-            item.delete_later()
+            if item.to_plain_text():
+                self.removeItem(item)
+                item.delete_later()
 
     def insert_item(self, item_type=None, x=None, y=None):
         item = DiagramItem(item_type, self.my_item_menu)
@@ -281,7 +276,6 @@ class DiagramScene(QGraphicsScene):
 
         if mouse_event.button() != Qt.LeftButton:
             return
-        print(self.my_mode)
         if self.my_mode == self.InsertItem:
             x = mouse_event.scenePos().x() // 50 * 50
             y = mouse_event.scenePos().y() // 50 * 50
@@ -298,7 +292,7 @@ class DiagramScene(QGraphicsScene):
             text_item.setTextInteractionFlags(Qt.TextEditorInteraction)
             text_item.setZValue(1000.0)
             text_item.lostFocus.connect(self.editor_lost_focus)
-            text_item.selectedChange.connect(self.itemSelected)
+            #text_item.selectedChange.connect(self.itemSelected)
             self.addItem(text_item)
             text_item.setDefaultTextColor(self.my_text_color)
             text_item.setPos(mouse_event.scenePos())
@@ -316,7 +310,8 @@ class DiagramScene(QGraphicsScene):
             new_line = QLineF(self.line.line().p1(), mouse_event.scenePos())
             self.line.setLine(new_line)
         elif self.my_mode == self.MoveItem:
-            self.m_dragged.setPos(mouse_event.scenePos() - self.m_drag_offset)
+            if self.m_dragged:
+                self.m_dragged.setPos(mouse_event.scenePos() - self.m_drag_offset)
             super(DiagramScene, self).mouseMoveEvent(mouse_event)
 
     def mouseReleaseEvent(self, mouse_event):
@@ -383,6 +378,7 @@ class MainWindow(QMainWindow):
         self.scene.itemSelected.connect(self.item_selected)
 
         self.create_tool_bars()
+        #        self.scene.enable_grid()
 
         layout = QHBoxLayout()
         layout.addWidget(self.tool_box)
@@ -396,7 +392,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.widget)
         self.setWindowTitle("The Flume Illustrator")
 
-    # noinspection PyAttributeOutsideInit
+    # noinspection PyAttributeOutsideInit,PyArgumentList
     def create_actions(self):
 
         self.to_front_action = QAction(QIcon(':/images/bringtofront.png'),
@@ -425,6 +421,8 @@ class MainWindow(QMainWindow):
         self.load_config_action = QAction("Load", self, shortcut="Ctrl+O",
                                           statusTip="Load config file", triggered=self.load_config)
 
+        self.enable_grid_action = QAction("Enable grid", self, triggered=self.enable_grid)
+
     # noinspection PyAttributeOutsideInit
     def create_menus(self):
         self.file_menu = self.menuBar().addMenu("File")
@@ -441,9 +439,9 @@ class MainWindow(QMainWindow):
 
     # noinspection PyAttributeOutsideInit,PyUnresolvedReferences
     def create_tool_box(self):
-        self.buttonGroup = QButtonGroup()
-        self.buttonGroup.setExclusive(False)
-        self.buttonGroup.buttonClicked[int].connect(self.button_group_clicked)
+        self.button_group = QButtonGroup()
+        self.button_group.setExclusive(False)
+        self.button_group.buttonClicked[int].connect(self.button_group_clicked)
 
         layout = QGridLayout()
         layout.addWidget(self.create_cell_widget("Source", DiagramItem.Source), 0, 0)
@@ -452,7 +450,7 @@ class MainWindow(QMainWindow):
 
         text_button = QToolButton()
         text_button.setCheckable(True)
-        self.buttonGroup.addButton(text_button, self.InsertTextButton)
+        self.button_group.addButton(text_button, self.InsertTextButton)
         text_button.setIcon(QIcon(QPixmap(':/images/textpointer.png').scaled(30, 30)))
         text_button.setIconSize(QSize(50, 50))
 
@@ -477,11 +475,11 @@ class MainWindow(QMainWindow):
     # noinspection PyAttributeOutsideInit,PyUnresolvedReferences
     def create_tool_bars(self):
 
-
         self.edit_tool_bar = self.addToolBar("Edit")
         self.edit_tool_bar.addAction(self.delete_action)
         self.edit_tool_bar.addAction(self.to_front_action)
         self.edit_tool_bar.addAction(self.send_back_action)
+        self.edit_tool_bar.addAction(self.enable_grid_action)
 
         self.font_combo = QFontComboBox()
         self.font_combo.currentFontChanged.connect(self.current_font_changed)
@@ -564,12 +562,12 @@ class MainWindow(QMainWindow):
         self.pointer_tool_bar.addWidget(self.scene_scale_combo)
 
     def button_group_clicked(self, button_id):
-        buttons = self.buttonGroup.buttons()
+        buttons = self.button_group.buttons()
         for button in buttons:
-            if self.buttonGroup.button(button_id) != button:
+            if self.button_group.button(button_id) != button:
                 button.setChecked(False)
-        if id == self.InsertTextButton:
-            self.scene.setMode(DiagramScene.InsertText)
+        if button_id == self.InsertTextButton:
+            self.scene.set_mode(DiagramScene.InsertText)
         else:
             self.scene.set_item_type(button_id)
             self.scene.set_mode(DiagramScene.InsertItem)
@@ -625,10 +623,10 @@ class MainWindow(QMainWindow):
     def item_inserted(self, diagram_type):
         self.pointer_type_group.button(DiagramScene.MoveItem).setChecked(True)
         self.scene.set_mode(self.scene.DefaultMode)  # FIXME self.pointerTypeGroup.checkedId()
-        self.buttonGroup.button(diagram_type).setChecked(False)
+        self.button_group.button(diagram_type).setChecked(False)
 
     def text_inserted(self, item):
-        self.pointer_type_group.button(self.InsertTextButton).setChecked(True)
+        self.button_group.button(self.InsertTextButton).setChecked(False)
         self.scene.set_mode(self.pointer_type_group.checkedId())
 
     def current_font_changed(self, font):
@@ -680,6 +678,7 @@ class MainWindow(QMainWindow):
         self.scene.setFont(font)
 
     def item_selected(self, item):
+        print(item)
         font = item.font()
         color = item.defaultTextColor()
         self.font_combo.setCurrentFont(font)
@@ -696,7 +695,7 @@ class MainWindow(QMainWindow):
         button.setIcon(icon)
         button.setIconSize(QSize(50, 50))
         button.setCheckable(True)
-        self.buttonGroup.addButton(button, diagram_type)
+        self.button_group.addButton(button, diagram_type)
 
         layout = QGridLayout()
         layout.addWidget(button, 0, 0, Qt.AlignHCenter)
@@ -707,7 +706,8 @@ class MainWindow(QMainWindow):
 
         return widget
 
-    def create_color_menu(self, slot, defaultColor):
+    # noinspection PyArgumentList
+    def create_color_menu(self, slot, default_color):
         colors = [Qt.black, Qt.white, Qt.red, Qt.blue, Qt.yellow]
         names = ["black", "white", "red", "blue", "yellow"]
 
@@ -717,11 +717,12 @@ class MainWindow(QMainWindow):
                              triggered=slot)
             action.setData(QColor(color))
             color_menu.addAction(action)
-            if color == defaultColor:
+            if color == default_color:
                 color_menu.setDefaultAction(action)
         return color_menu
 
-    def create_color_tool_button_icon(self, image_file, color):
+    @staticmethod
+    def create_color_tool_button_icon(image_file, color):
         pixmap = QPixmap(50, 80)
         pixmap.fill(Qt.transparent)
         painter = QPainter(pixmap)
@@ -742,6 +743,11 @@ class MainWindow(QMainWindow):
         painter.end()
 
         return QIcon(pixmap)
+
+    def enable_grid(self):
+        for i in range(50):
+            for j in range(50):
+                self.scene.addEllipse(i * 100, j * 100, 2, 2)
 
 
     # ########################################################################
