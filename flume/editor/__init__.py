@@ -1,1 +1,1 @@
-__author__ = 'adobrodey'
+from flume.editor.flume_object import FlumeObject

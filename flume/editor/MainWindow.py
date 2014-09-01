@@ -422,7 +422,8 @@ class MainWindow(QMainWindow):
         self.load_config_action = QAction("Load", self, shortcut="Ctrl+O",
                                           statusTip="Load config file", triggered=self.load_config)
 
-        self.enable_grid_action = QAction("Enable grid", self, triggered=self.enable_grid)
+        self.enable_grid_action = QAction("Enable grid", self, checkable=True, triggered=self.enable_grid)
+
 
     # noinspection PyAttributeOutsideInit
     def create_menus(self):
@@ -480,6 +481,7 @@ class MainWindow(QMainWindow):
         self.edit_tool_bar.addAction(self.delete_action)
         self.edit_tool_bar.addAction(self.to_front_action)
         self.edit_tool_bar.addAction(self.send_back_action)
+
         self.edit_tool_bar.addAction(self.enable_grid_action)
 
         self.font_combo = QFontComboBox()
@@ -746,10 +748,13 @@ class MainWindow(QMainWindow):
         return QIcon(pixmap)
 
     def enable_grid(self):
+        if self.enable_grid_action.isChecked():
+            color = Qt.black
+        else:
+            color = Qt.white
         for i in range(50):
             for j in range(50):
-                self.scene.addEllipse(i * 100, j * 100, 2, 2)
-
+                self.scene.addEllipse(i * 100, j * 100, 2, 2, QPen(color))
 
     # ########################################################################
 
@@ -761,6 +766,7 @@ class MainWindow(QMainWindow):
             # TODO print(config)
             self.procedure_config(config)
 
+    # noinspection PyMethodMayBeStatic
     def parse_config(self, config_file):
         comment_char = '#'
         option_char = '='
