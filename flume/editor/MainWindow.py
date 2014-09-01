@@ -1,17 +1,17 @@
 import os
+import math
+# noinspection PyUnresolvedReferences
+import diagramscene_rc
 from PyQt5.QtCore import (pyqtSignal, QLineF, QPointF, QRectF, QSize,
                           QSizeF, Qt, QRect)
-from PyQt5.QtGui import (QFont, QIcon, QPainter, QPen, QPixmap, QPolygonF, QTransform, QPainterPath, QColor,
+from PyQt5.QtGui import (QFont, QIcon, QPainter, QPen, QPixmap, QPolygonF, QTransform, QColor,
                          QIntValidator)
+# from PyQt5 import QPainterPath
 from PyQt5.QtWidgets import (QAction, QApplication, QButtonGroup, QComboBox,
                              QGraphicsItem, QGraphicsLineItem, QGraphicsPolygonItem,
                              QGraphicsScene, QGraphicsView, QGridLayout,
                              QHBoxLayout, QLabel, QMainWindow, QMessageBox, QSizePolicy,
                              QToolBox, QToolButton, QWidget, QFileDialog, QGraphicsTextItem, QMenu, QFontComboBox)
-
-# noinspection PyUnresolvedReferences
-import diagramscene_rc
-import math
 
 
 class Arrow(QGraphicsLineItem):
@@ -292,7 +292,7 @@ class DiagramScene(QGraphicsScene):
             text_item.setTextInteractionFlags(Qt.TextEditorInteraction)
             text_item.setZValue(1000.0)
             text_item.lostFocus.connect(self.editor_lost_focus)
-            #text_item.selectedChange.connect(self.itemSelected)
+            # text_item.selectedChange.connect(self.itemSelected)
             self.addItem(text_item)
             text_item.setDefaultTextColor(self.my_text_color)
             text_item.setPos(mouse_event.scenePos())
@@ -360,6 +360,7 @@ class DiagramScene(QGraphicsScene):
         return False
 
 
+# noinspection PyAttributeOutsideInit
 class MainWindow(QMainWindow):
     InsertTextButton = 10
 
@@ -378,7 +379,7 @@ class MainWindow(QMainWindow):
         self.scene.itemSelected.connect(self.item_selected)
 
         self.create_tool_bars()
-        #        self.scene.enable_grid()
+        # self.scene.enable_grid()
 
         layout = QHBoxLayout()
         layout.addWidget(self.tool_box)
@@ -412,7 +413,7 @@ class MainWindow(QMainWindow):
                                         triggered=self.handle_font_change)
 
         self.delete_action = QAction(QIcon(':/images/delete.png'),
-                                     "Delete", self, shortcut="Delete", statusTip="Delete item from diagram",
+                                     "Delete", self, shortcut="Delete", statusTip='Delete item from diagram',
                                      triggered=self.delete_item)
         self.exit_action = QAction("Exit", self, shortcut="Ctrl+X",
                                    statusTip="Quit program", triggered=self.close)
@@ -581,8 +582,8 @@ class MainWindow(QMainWindow):
     # noinspection PyTypeChecker,PyCallByClass
     def about(self):
 
-        QMessageBox.about(self, "About Flume Illustrator",
-                          "The Flume illustrator shows config-file details")
+        # noinspection PyArgumentList
+        QMessageBox.about(self, "About Flume Illustrator", "The Flume illustrator shows config-file details")
 
     def pointer_group_clicked(self):  # FIXME deleted i
         self.scene.set_mode(self.pointer_type_group.checkedId())
@@ -632,7 +633,7 @@ class MainWindow(QMainWindow):
     def current_font_changed(self, font):
         self.handle_font_change()
 
-    def font_size_changed(self, font):
+    def font_size_changed(self, font=None):
         self.handle_font_change()
 
     def text_color_changed(self):
@@ -680,7 +681,6 @@ class MainWindow(QMainWindow):
     def item_selected(self, item):
         print(item)
         font = item.font()
-        color = item.defaultTextColor()
         self.font_combo.setCurrentFont(font)
         self.font_size_combo.setEditText(str(font.pointSize()))
         self.bold_action.setChecked(font.weight() == QFont.Bold)
@@ -735,7 +735,8 @@ class MainWindow(QMainWindow):
 
         return QIcon(pixmap)
 
-    def create_color_icon(self, color):
+    @staticmethod
+    def create_color_icon(color):
         pixmap = QPixmap(20, 20)
         painter = QPainter(pixmap)
         painter.setPen(Qt.NoPen)
@@ -753,6 +754,7 @@ class MainWindow(QMainWindow):
     # ########################################################################
 
     def load_config(self):
+        # noinspection PyCallByClass
         filename = QFileDialog.getOpenFileName(self, "Open config file", os.getenv('Home'))
         with open(filename[0], "r") as config_file:
             config = self.parse_config(config_file)
@@ -801,7 +803,7 @@ class MainWindow(QMainWindow):
             for component in config[agent].keys():
                 if component != "connections":
                     new_item = self.scene.insert_item(item_type=items[component][0],
-                                                      x=2200 + 300 * items[component][1], y=2400)
+                                                      x=300 * items[component][1], y=400)
                     for name in config[agent][component].keys():
                         components[name] = (new_item, items[component][1])
             for connection in config[agent]["connections"]:
