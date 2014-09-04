@@ -1,10 +1,10 @@
 from PyQt5.QtCore import pyqtSignal, Qt, QLineF
 from PyQt5.QtGui import QFont, QPen, QTransform
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsTextItem, QGraphicsItem, QGraphicsLineItem, QInputDialog
-from flume.editor import FlumeObject, FlumeDiagramItem
-from flume.editor.arrow import Arrow
-from flume.editor.diagram_text_item import DiagramTextItem
-
+from flume import Arrow
+from flume.flume_object import FlumeObject
+from flume.diagram_text_item import DiagramTextItem
+from flume.flume_diagram_item import FlumeDiagramItem
 
 class DiagramScene(QGraphicsScene):
     InsertItem, InsertLine, InsertText, MoveItem, DefaultMode = range(5)
@@ -71,6 +71,7 @@ class DiagramScene(QGraphicsScene):
                 self.removeItem(item)
                 item.delete_later()
 
+    # noinspection PyArgumentList
     def insert_item(self, item_type=None, x=None, y=None, text=None):
         if not text:
             text, ok = QInputDialog.getText(QInputDialog(), 'Insert name', 'Enter new object name:')
@@ -168,4 +169,3 @@ class DiagramScene(QGraphicsScene):
             if isinstance(item, new_type):
                 return True
         return False
-

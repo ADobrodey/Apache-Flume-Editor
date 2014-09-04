@@ -1,6 +1,5 @@
 import pickle
-from flume.editor import FlumeDiagramItem
-# from flume.editor import FlumeObjectContainer
+from flume.flume_diagram_item import FlumeDiagramItem
 
 
 class UnknownPropertyError(KeyError):
@@ -18,8 +17,6 @@ class FlumeObject(object):
         self.properties = {}
         self.managed = False
         self.pictogram = FlumeDiagramItem(self)
-        # self.load_default_properties("avro")
-
         #FlumeObjectContainer().add(self)  #TODO
 
     def set_pic(self):

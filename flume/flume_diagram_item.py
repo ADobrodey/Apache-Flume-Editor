@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QPointF, Qt
 from PyQt5.QtGui import QPolygonF, QPixmap, QPainter, QPen, QFont
 from PyQt5.QtWidgets import QGraphicsPolygonItem, QGraphicsItem
-from flume.editor.manage_properties import ManageProperties
+from flume.manage_properties import ManageProperties
 
 
 class FlumeDiagramItem(QGraphicsPolygonItem):
@@ -47,7 +47,6 @@ class FlumeDiagramItem(QGraphicsPolygonItem):
         except ValueError:
             pass
 
-
     def remove_arrows(self):
         for arrow in self.arrows:
             arrow.start_item().remove_arrow(arrow)
@@ -60,10 +59,10 @@ class FlumeDiagramItem(QGraphicsPolygonItem):
     def paint(self, painter, option, widget=None):
         super(FlumeDiagramItem, self).paint(painter, option, widget)
 
-        painter.setFont(QFont('Arial', 15))
+        painter.setFont(QFont('Arial', 12))
         if 'type' in self.flume_object.properties.keys():
             self.text = self.name + "(" + self.flume_object.properties['type']['value'] + ")"
-        painter.drawText(-50, -50, 100, 100, Qt.AlignCenter, self.text)
+        painter.drawText(-75, 0, self.text)  # Qt.AlignCenter,-50, -50, 150, 150,
 
     def mouseDoubleClickEvent(self, mouse_event):
         if ManageProperties(self.flume_object).exec_():

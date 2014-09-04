@@ -1,4 +1,3 @@
-import diagramscene_rc
 from PyQt5.QtCore import (QRectF, QSize,
                           Qt, QRect)
 from PyQt5.QtGui import (QFont, QIcon, QPainter, QPen, QPixmap, QColor,
@@ -8,20 +7,21 @@ from PyQt5.QtWidgets import (QAction, QApplication, QButtonGroup, QComboBox,
                              QGraphicsView, QGridLayout,
                              QHBoxLayout, QLabel, QMainWindow, QMessageBox, QSizePolicy,
                              QToolBox, QToolButton, QWidget, QMenu, QFontComboBox)
-from flume.editor import FlumeObject, FlumeDiagramItem
-from flume.editor.config_maintenance import FlumeConfig
-from flume.editor.diagram_scene import DiagramScene
 
 
 # noinspection PyAttributeOutsideInit
-from flume.editor.properties import properties_generator
+from flume import FlumeConfig, DiagramScene, FlumeDiagramItem, FlumeObject
+from properties import properties_generator
 
 
+# noinspection PyAttributeOutsideInit,PyUnusedLocal,PyUnresolvedReferences
 class MainWindow(QMainWindow):
     InsertTextButton = 10
     items = {-2: "source", -3: "channel", -4: "sink"}
 
     def __init__(self):
+        import diagramscene_rc
+
         super(MainWindow, self).__init__()
 
         self.config_manipulations = FlumeConfig(self)
@@ -33,7 +33,7 @@ class MainWindow(QMainWindow):
         self.clicked_button_id = 0
 
         self.scene = DiagramScene(self.item_menu)
-        self.scene.setSceneRect(QRectF(0, 0, 1000, 1000))
+        self.scene.setSceneRect(QRectF(0, 0, 5000, 5000))
 
         self.scene.itemInserted.connect(self.item_inserted)
         self.scene.textInserted.connect(self.text_inserted)

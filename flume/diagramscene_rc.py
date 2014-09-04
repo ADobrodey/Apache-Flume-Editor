@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-  
+
 # Resource object code
 #
 # Created: Sun May 5 04:57:31 2013
-#      by: The Resource Compiler for PyQt (Qt v5.0.2)
+# by: The Resource Compiler for PyQt (Qt v5.0.2)
 #
 # WARNING! All changes made in this file will be lost!
-  
+
 from PyQt5 import QtCore
-  
+
 qt_resource_data = b"\
 \x00\x00\x01\x12\
 \x89\
@@ -307,7 +307,7 @@ qt_resource_data = b"\
 \x78\xe4\xb7\xe3\x90\x30\x5f\x00\x00\x00\x00\x49\x45\x4e\x44\xae\
 \x42\x60\x82\
 "
-  
+
 qt_resource_name = b"\
 \x00\x06\
 \x07\x03\x7d\xc3\
@@ -374,7 +374,7 @@ qt_resource_name = b"\
 \x00\x62\
 \x00\x61\x00\x63\x00\x6b\x00\x67\x00\x72\x00\x6f\x00\x75\x00\x6e\x00\x64\x00\x33\x00\x2e\x00\x70\x00\x6e\x00\x67\
 "
-  
+
 qt_resource_struct = b"\
 \x00\x00\x00\x00\x00\x02\x00\x00\x00\x01\x00\x00\x00\x01\
 \x00\x00\x00\x00\x00\x02\x00\x00\x00\x0f\x00\x00\x00\x02\
@@ -394,12 +394,14 @@ qt_resource_struct = b"\
 \x00\x00\x00\x42\x00\x00\x00\x00\x00\x01\x00\x00\x02\x11\
 \x00\x00\x00\xac\x00\x00\x00\x00\x00\x01\x00\x00\x06\xbe\
 "
-  
+
+
 def qInitResources():
     QtCore.qRegisterResourceData(0x01, qt_resource_struct, qt_resource_name, qt_resource_data)
-  
+
+
 def qCleanupResources():
     QtCore.qUnregisterResourceData(0x01, qt_resource_struct, qt_resource_name, qt_resource_data)
-  
+
+
 qInitResources()
-  

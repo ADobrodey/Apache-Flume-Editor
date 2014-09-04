@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QRectF, Qt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsScene, QHBoxLayout, QGraphicsView, QWidget
+
 from flume.editor import FlumeObject
 
 
