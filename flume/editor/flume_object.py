@@ -1,66 +1,60 @@
 import pickle
-from flume.editor import flume_diagram_item
-from flume.editor.flume_diagram_item import FlumeDiagramItem
+from flume.editor import FlumeDiagramItem
+# from flume.editor import FlumeObjectContainer
+
+
+class UnknownPropertyError(KeyError):
+    pass
 
 
 class FlumeObject(object):
-    source, channel, sink = range(3)
+    components = {"source": 0, "channel": 1, "sink": 2}
+    statuses = {"active": 0, "ready": 1, "error": -1}
 
-    def __init__(self, component):
-        self.component = component  # source sink channel
-        self.pictogram = FlumeDiagramItem(component)  # QPoligonItem
-        self.status = 2  # {"error":2, "defined":1, "active":0}
+    def __init__(self, component, name):
+        self._component = component
+        self.status = self.statuses["error"]  # {"error":2, "defined":1, "active":0}
+        self._name = name  # s1, k5
         self.properties = {}
+        self.managed = False
+        self.pictogram = FlumeDiagramItem(self)
+        # self.load_default_properties("avro")
+
+        #FlumeObjectContainer().add(self)  #TODO
+
+    def set_pic(self):
+        # QPoligonItem
+        pass
+
+    @property
+    def component(self):
+        return self._component
+
+    @property
+    def name(self):
+        return self._name
 
     def set_property(self, new_property, value):
-        self.properties[new_property]["value"] = value
-        self.properties[new_property]["default"] = False
+        if self.properties[new_property]:
+            self.properties[new_property]["value"] = value
+            self.properties[new_property]["default"] = False
+        else:
+            raise UnknownPropertyError
 
-    def activate(self):
-        if self.is_defined():
-            self.status = 0
-            return True
-        self.status = 2
-        return False
-
-    def is_defined(self):
-        # if properties loaded
-        if self.properties:
-            for prop in self.properties.keys():
-                # if property required and is None:
-                if prop["required"] and prop["default"]:
-                    return False
-            return True
-        return False
-
-    def load_default_properties(self, source_type):
-        path = ':/properties/' + self.component + '/' + source_type + '.dat'
+    def load_default_properties(self, component_type):
+        path = 'properties/' + self.component + '/' + component_type + '.dat'
         with open(path, 'rb') as property_file:
             loaded_properties = pickle.load(property_file)
-
-            for component_property in loaded_properties:
-                self.properties[component_property["name"]] = {"value": component_property["default"],
-                                                               "required": component_property["required"],
-                                                               "default": True,
-                                                               "description": component_property["description"]}
+            self.properties = loaded_properties
 
 
 class SourceObject(FlumeObject):
-    def __init__(self, component, name, source_type):
-        super(SourceObject, self).__init__(component)
-        self.name = name  # s1
-        self.source_type = source_type  # "avro" "thrift"
-        self.load_default_properties(self.source_type)
+    pass
 
 
+class SinkObject(FlumeObject):
+    pass
 
 
-
-
-
-
-
-
-
-
-
+class ChannelObject(FlumeObject):
+    pass

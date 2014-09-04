@@ -1,23 +1,37 @@
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QRectF, Qt
+from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsScene, QHBoxLayout, QGraphicsView, QWidget
+from flume.editor import FlumeObject
 
-class Foo(QObject):
 
-    # Define a new signal called 'trigger' that has no arguments.
-    trigger = pyqtSignal(int)
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super(MainWindow, self).__init__()
 
-    def connect_and_emit_trigger(self):
-        # Connect the trigger signal to a slot.
-        self.trigger.connect(self.handle_trigger)
+        self.scene = QGraphicsScene()
+        self.scene.setSceneRect(QRectF(0, 0, 1000, 1000))
 
-        # Emit the signal.
-        self.trigger.emit(2)
+        item = FlumeObject("source", "r1")
+        self.scene.addItem(item.pictogram)
+        item.pictogram.setPos(200, 200)
 
-    def handle_trigger(self, res):
-        # Show that the slot has been called.
+        layout = QHBoxLayout()
+        self.view = QGraphicsView(self.scene)
+        layout.addWidget(self.view)
+        self.view.setAlignment(Qt.AlignLeft | Qt.AlignTop)  # FIXME doesn't work as needed
 
-        print ("trigger signal received", res)
+        self.widget = QWidget()
+        self.widget.setLayout(layout)
+
+        self.setCentralWidget(self.widget)
+        self.setWindowTitle("The Flume Illustrator")
+
 
 if __name__ == '__main__':
+    import sys
 
-    foo = Foo()
-    foo.connect_and_emit_trigger()
+    app = QApplication(sys.argv)
+
+    screen = MainWindow()
+    screen.show()
+
+    sys.exit(app.exec_())
