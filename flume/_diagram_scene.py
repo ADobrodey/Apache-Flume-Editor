@@ -2,9 +2,10 @@ from PyQt5.QtCore import pyqtSignal, Qt, QLineF
 from PyQt5.QtGui import QFont, QPen, QTransform
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsTextItem, QGraphicsItem, QGraphicsLineItem, QInputDialog
 from flume import Arrow
-from flume.flume_object import FlumeObject
-from flume.diagram_text_item import DiagramTextItem
-from flume.flume_diagram_item import FlumeDiagramItem
+from flume._flume_object import FlumeObject
+from flume._diagram_text_item import DiagramTextItem
+from flume._flume_diagram_item import FlumeDiagramItem
+
 
 class DiagramScene(QGraphicsScene):
     InsertItem, InsertLine, InsertText, MoveItem, DefaultMode = range(5)

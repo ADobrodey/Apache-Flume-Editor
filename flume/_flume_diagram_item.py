@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QPointF, Qt
 from PyQt5.QtGui import QPolygonF, QPixmap, QPainter, QPen, QFont
 from PyQt5.QtWidgets import QGraphicsPolygonItem, QGraphicsItem
-from flume.manage_properties import ManageProperties
+from flume._manage_properties import ManageProperties
 
 
 class FlumeDiagramItem(QGraphicsPolygonItem):

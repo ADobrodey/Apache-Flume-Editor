@@ -1,6 +1,6 @@
 import os
 from PyQt5.QtWidgets import QFileDialog
-from flume.manage_properties import ManageProperties
+from flume._manage_properties import ManageProperties
 
 
 class FlumeConfig(object):

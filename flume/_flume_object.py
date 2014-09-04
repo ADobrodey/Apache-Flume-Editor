@@ -1,5 +1,5 @@
 import pickle
-from flume.flume_diagram_item import FlumeDiagramItem
+from flume._flume_diagram_item import FlumeDiagramItem
 
 
 class UnknownPropertyError(KeyError):
@@ -17,7 +17,7 @@ class FlumeObject(object):
         self.properties = {}
         self.managed = False
         self.pictogram = FlumeDiagramItem(self)
-        #FlumeObjectContainer().add(self)  #TODO
+        # FlumeObjectContainer().add(self)  #TODO
 
     def set_pic(self):
         # QPoligonItem

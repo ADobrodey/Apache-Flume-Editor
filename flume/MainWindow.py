@@ -20,7 +20,7 @@ class MainWindow(QMainWindow):
     items = {-2: "source", -3: "channel", -4: "sink"}
 
     def __init__(self):
-        import diagramscene_rc
+        import _diagramscene_rc
 
         super(MainWindow, self).__init__()
 
@@ -45,7 +45,7 @@ class MainWindow(QMainWindow):
         layout = QHBoxLayout()
         layout.addWidget(self.tool_box)
         self.view = QGraphicsView(self.scene)
-        self.view.setAlignment(Qt.AlignLeft | Qt.AlignTop)  # FIXME doesn't work as needed
+        self.view.centerOn(0, 0)
         layout.addWidget(self.view)
 
         self.widget = QWidget()
@@ -248,7 +248,7 @@ class MainWindow(QMainWindow):
         # noinspection PyArgumentList
         QMessageBox.about(self, "About Flume Illustrator", "The Flume illustrator shows config-file details")
 
-    def pointer_group_clicked(self):  # FIXME deleted i
+    def pointer_group_clicked(self):
         self.scene.set_mode(self.pointer_type_group.checkedId())
 
     def bring_to_front(self):
@@ -286,7 +286,7 @@ class MainWindow(QMainWindow):
 
     def item_inserted(self, diagram_type):
         self.pointer_type_group.button(DiagramScene.MoveItem).setChecked(True)
-        self.scene.set_mode(self.scene.DefaultMode)  # FIXME self.pointerTypeGroup.checkedId()
+        self.scene.set_mode(self.scene.DefaultMode)
         self.button_group.button(self.clicked_button_id).setChecked(False)
 
     def text_inserted(self, item):
