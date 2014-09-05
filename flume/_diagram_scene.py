@@ -89,8 +89,8 @@ class DiagramScene(QGraphicsScene):
         if mouse_event.button() != Qt.LeftButton:
             return
         if self.my_mode == self.InsertItem:
-            x = mouse_event.scenePos().x() // 50 * 50
-            y = mouse_event.scenePos().y() // 50 * 50
+            x = mouse_event.scenePos().x()  # // 50 * 50
+            y = mouse_event.scenePos().y()  # // 50 * 50
             item = self.insert_item(self.my_item_type, x, y)
             self.itemInserted.emit(item.flume_component)
         elif self.my_mode == self.InsertLine:
@@ -148,8 +148,8 @@ class DiagramScene(QGraphicsScene):
         self.line = None
 
         if self.m_dragged:
-            x = mouse_event.scenePos().x() // 50 * 50
-            y = mouse_event.scenePos().y() // 50 * 50
+            x = mouse_event.scenePos().x()  # // 50 * 50
+            y = mouse_event.scenePos().y()  # // 50 * 50
             self.m_dragged.setPos(x, y)
             self.m_dragged = None
             self.my_mode = self.DefaultMode

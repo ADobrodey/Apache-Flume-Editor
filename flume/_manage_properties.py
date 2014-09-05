@@ -23,10 +23,13 @@ class ManageProperties(QDialog):
         button_box.button(QDialogButtonBox.Ok).setDefault(True)
 
         for idx, prop in enumerate(sorted(self.flume_object.properties.keys())):
-            label = QLabel(prop)
+            label = QLabel(prop + ':')
             editor = QLineEdit(self.flume_object.properties[prop]["value"])
             if prop == "type":
                 editor.setReadOnly(True)
+            if self.flume_object.properties[prop]["required"]:
+                label.setText(prop + ":*")
+                pass  # label.setFont(QFont) TODO
             editor.setToolTip(self.flume_object.properties[prop]["description"])
             editor.setToolTipDuration(-1)
 

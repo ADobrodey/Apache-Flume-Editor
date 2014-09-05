@@ -88,6 +88,7 @@ class MainWindow(QMainWindow):
     # noinspection PyAttributeOutsideInit
     def create_menus(self):
         self.file_menu = self.menuBar().addMenu("File")
+        self.file_menu.addAction(self.load_config_action)
         self.file_menu.addAction(self.exit_action)
 
         self.item_menu = self.menuBar().addMenu("Item")
